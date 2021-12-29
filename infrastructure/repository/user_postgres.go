@@ -39,3 +39,31 @@ func (u *UserPostgres) Create(e *entity.User) (entity.ID, error) {
 
 	return e.ID, nil
 }
+
+//Get an user
+func (u *UserPostgres) Get(id entity.ID) (*entity.User, error) {
+	return getUser(id, u.db)
+}
+
+func getUser(id entity.ID, db *sql.DB) (*entity.User, error) {
+	var user entity.User
+
+	stmt, err := db.Prepare(
+		`SELECT u.id, u.name, u.email, u.paid_date, u.due_date, u.total_month
+		FROM users as u WHERE u.id = $1`,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer stmt.Close()
+
+	err = stmt.QueryRow(id).Scan(&user.ID, &user.Name, &user.Email, &user.PaidDate, &user.DueDate, &user.TotalMonth)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
