@@ -67,3 +67,22 @@ func getUser(id entity.ID, db *sql.DB) (*entity.User, error) {
 
 	return &user, nil
 }
+
+//Delete an user
+func (r *UserPostgres) Delete(id entity.ID) error {
+	stmt, err := r.db.Prepare(`DELETE FROM users WHERE id = $1`)
+
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.Exec(id)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
