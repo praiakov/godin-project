@@ -8,6 +8,7 @@ import (
 type Writer interface {
 	Create(e *entity.User) (entity.ID, error)
 	Delete(id entity.ID) error
+	Update(e *entity.User) error
 }
 
 //Reader interface
@@ -26,4 +27,5 @@ type UseCase interface {
 	CreateUser(name, email string, totalMonth int) (entity.ID, error)
 	GetUser(id entity.ID) (*entity.User, error)
 	DeleteUser(id entity.ID) error
+	UpdateUser(name, email string, totalMonth int, id entity.ID) error
 }

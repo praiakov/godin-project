@@ -69,8 +69,8 @@ func getUser(id entity.ID, db *sql.DB) (*entity.User, error) {
 }
 
 //Delete an user
-func (r *UserPostgres) Delete(id entity.ID) error {
-	stmt, err := r.db.Prepare(`DELETE FROM users WHERE id = $1`)
+func (u *UserPostgres) Delete(id entity.ID) error {
+	stmt, err := u.db.Prepare(`DELETE FROM users WHERE id = $1`)
 
 	if err != nil {
 		return err
@@ -79,6 +79,25 @@ func (r *UserPostgres) Delete(id entity.ID) error {
 	defer stmt.Close()
 
 	_, err = stmt.Exec(id)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+//Update an user
+func (u *UserPostgres) Update(e *entity.User) error {
+	stmt, err := u.db.Prepare(`UPDATE users SET name=$1, email= $2, paid_date= $3, due_date= $4, total_month= $5 WHERE id = $6`)
+
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.Exec(e.Name, e.Email, e.PaidDate, e.DueDate, e.TotalMonth, e.ID)
 
 	if err != nil {
 		return err

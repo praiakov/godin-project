@@ -47,3 +47,27 @@ func (s *Service) DeleteUser(id entity.ID) error {
 
 	return s.repo.Delete(id)
 }
+
+//UpdateUser Update an user
+func (s *Service) UpdateUser(name, email string, totalMonth int, id entity.ID) error {
+	u, err := s.GetUser(id)
+
+	if err != nil {
+		return err
+	}
+
+	err = u.Validate()
+
+	if err != nil {
+		return err
+	}
+
+	u.Name = name
+	u.Email = email
+	u.TotalMonth = totalMonth
+	u.PaidDate = time.Now()
+	u.DueDate = time.Now().AddDate(0, u.TotalMonth, 0)
+
+	return s.repo.Update(u)
+
+}

@@ -1,6 +1,9 @@
 package entity
 
-import "time"
+import (
+	"errors"
+	"time"
+)
 
 //User data
 type User struct {
@@ -23,4 +26,13 @@ func NewUser(name, email string, paidDate, dueDate time.Time, totalMonth int) *U
 		DueDate:    dueDate,
 		TotalMonth: totalMonth,
 	}
+}
+
+//Validate validate data
+func (u *User) Validate() error {
+	if u.Name == "" || u.Email == "" || u.TotalMonth == 0 {
+		return errors.New("validate")
+	}
+
+	return nil
 }
