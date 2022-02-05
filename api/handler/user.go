@@ -12,6 +12,26 @@ import (
 	"github.com/praiakov/godin/usecase/user"
 )
 
+func listUsers(service user.UseCase) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		errorMessage := "Error reading users"
+
+		data, err := service.ListUsers()
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(errorMessage))
+			return
+		}
+		err = json.NewEncoder(w).Encode(data)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(errorMessage))
+			return
+		}
+	})
+}
+
 func createUser(service user.UseCase) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		errorMessage := "Error adding user"
@@ -169,6 +189,10 @@ func updateUser(service user.UseCase) http.Handler {
 
 //MakeUserHandlers make url handlers
 func MakeUserHandlers(r *mux.Router, n negroni.Negroni, service user.UseCase) {
+	r.Handle("/v1/users", n.With(
+		negroni.Wrap(listUsers(service)),
+	)).Methods("GET", "OPTIONS")
+
 	r.Handle("/v1/user", n.With(
 		negroni.Wrap(createUser(service)),
 	)).Methods("POST", "OPTIONS")

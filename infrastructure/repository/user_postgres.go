@@ -105,3 +105,35 @@ func (u *UserPostgres) Update(e *entity.User) error {
 
 	return nil
 }
+
+//List users
+func (u *UserPostgres) List() ([]*entity.User, error) {
+	var users []*entity.User
+
+	stmt, err := u.db.Prepare(
+		`SELECT id, name, email, paid_date, due_date, total_month
+		FROM users`,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer stmt.Close()
+
+	rows, err := stmt.Query()
+
+	for rows.Next() {
+		var u entity.User
+
+		err = rows.Scan(&u.ID, &u.Name, &u.Email, &u.PaidDate, &u.DueDate, &u.TotalMonth)
+		if err != nil {
+			return nil, err
+		}
+
+		users = append(users, &u)
+	}
+
+	return users, nil
+
+}

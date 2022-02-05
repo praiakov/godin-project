@@ -14,6 +14,7 @@ type Writer interface {
 //Reader interface
 type Reader interface {
 	Get(id entity.ID) (*entity.User, error)
+	List() ([]*entity.User, error)
 }
 
 //Repository interface
@@ -24,6 +25,7 @@ type Repository interface {
 
 //UseCase interface
 type UseCase interface {
+	ListUsers() ([]*entity.User, error)
 	CreateUser(name, email string, totalMonth int) (entity.ID, error)
 	GetUser(id entity.ID) (*entity.User, error)
 	DeleteUser(id entity.ID) error

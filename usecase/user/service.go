@@ -69,5 +69,9 @@ func (s *Service) UpdateUser(name, email string, totalMonth int, id entity.ID) e
 	u.DueDate = time.Now().AddDate(0, u.TotalMonth, 0)
 
 	return s.repo.Update(u)
+}
 
+//ListUsers List users
+func (s *Service) ListUsers() ([]*entity.User, error) {
+	return s.repo.List()
 }
